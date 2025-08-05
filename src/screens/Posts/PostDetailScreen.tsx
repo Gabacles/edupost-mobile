@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Button, Alert, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, ActivityIndicator, Button, Modal, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { fetchPost, deletePost } from '../../api/api';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -26,6 +26,8 @@ export default function PostDetailScreen({ route, navigation }: Props) {
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -47,22 +49,16 @@ export default function PostDetailScreen({ route, navigation }: Props) {
     load();
   }, [postId]);
 
-  const handleDelete = () => {
-    Alert.alert('Confirmar', 'Tem certeza de que deseja deletar esta postagem?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Deletar',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deletePost(postId);
-            navigation.goBack();
-          } catch (err: any) {
-            Alert.alert('Error', err?.response?.data?.message ?? 'Erro ao deletar postagem');
-          }
-        },
-      },
-    ]);
+  const handleDelete = async () => {
+    try {
+      await deletePost(postId);
+      setShowDeleteModal(false);
+      navigation.goBack();
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Erro ao deletar postagem');
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
+    }
   };
 
   if (loading) {
@@ -73,13 +69,6 @@ export default function PostDetailScreen({ route, navigation }: Props) {
     );
   }
 
-  if (error) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.error}>{error}</Text>
-      </View>
-    );
-  }
 
   if (!post) {
     return (
@@ -99,9 +88,50 @@ export default function PostDetailScreen({ route, navigation }: Props) {
       {canEdit && (
         <View style={styles.buttonRow}>
           <Button title="Editar" onPress={() => navigation.navigate('EditPost', { postId: post.id })} />
-          <Button title="Deletar" onPress={handleDelete} color="#d64545" />
+          <Button title="Deletar" onPress={() => setShowDeleteModal(true)} color="#d64545" />
         </View>
       )}
+
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowDeleteModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Confirmar</Text>
+            <Text style={styles.modalText}>Tem certeza de que deseja deletar esta postagem?</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setShowDeleteModal(false)} style={styles.modalButton}>
+                <Text style={styles.cancelText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDelete} style={[styles.modalButton, styles.deleteButton]}>
+                <Text style={styles.deleteText}>Deletar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showErrorModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowErrorModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Erro</Text>
+            <Text style={styles.modalText}>{error}</Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setShowErrorModal(false)} style={styles.modalButton}>
+                <Text style={styles.cancelText}>Fechar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -136,5 +166,53 @@ const styles = StyleSheet.create({
   },
   error: {
     color: '#d64545',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 24,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: '#666',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  deleteButton: {
+    backgroundColor: '#d64545',
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  deleteText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
