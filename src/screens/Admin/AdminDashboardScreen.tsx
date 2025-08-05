@@ -140,13 +140,16 @@ export default function AdminDashboardScreen({ navigation }: Props) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>Confirmar deleção</Text>
-            <Text>Deseja realmente deletar este post?</Text>
+            <Text style={styles.modalTitle}>Confirmar</Text>
+            <Text style={styles.modalText}>Tem certeza de que deseja deletar esta postagem?</Text>
             {deleteError && <Text style={styles.error}>{deleteError}</Text>}
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 16 }}>
-              <Button title="Cancelar" onPress={() => setShowDeleteModal(false)} />
-              <View style={{ width: 12 }} />
-              <Button title="Deletar" color="#d64545" onPress={confirmDelete} />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setShowDeleteModal(false)} style={styles.modalButton}>
+                <Text style={styles.cancelText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={confirmDelete} style={[styles.modalButton, styles.deleteButton]}>
+                <Text style={styles.deleteText}>Deletar</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -197,15 +200,50 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#fff',
-    padding: 24,
     borderRadius: 8,
-    minWidth: 260,
-    elevation: 4,
+    padding: 24,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: '#666',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  deleteButton: {
+    backgroundColor: '#d64545',
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  deleteText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
