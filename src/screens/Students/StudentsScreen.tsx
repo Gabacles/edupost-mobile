@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Button,
   TextInput,
-  Alert,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { fetchUsers, createUser, updateUser, deleteUser } from '../../api/api';
@@ -35,6 +35,8 @@ export default function StudentsScreen({ navigation }: Props) {
   const [newUser, setNewUser] = useState({ name: '', username: '', email: '', password: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ name: '', username: '', email: '', password: '' });
+  const [modal, setModal] = useState<{ visible: boolean; title: string; message: string; onClose?: () => void }>({ visible: false, title: '', message: '', onClose: undefined });
+  const showModal = (title: string, message: string, onClose?: () => void) => setModal({ visible: true, title, message, onClose });
 
   const loadUsers = async () => {
     setLoading(true);
@@ -57,7 +59,7 @@ export default function StudentsScreen({ navigation }: Props) {
   const handleAdd = async () => {
     const { name, username, email, password } = newUser;
     if (!name || !username || !email || !password) {
-      Alert.alert('Validação', 'Todos os campos são obrigatórios');
+      showModal('Validação', 'Todos os campos são obrigatórios');
       return;
     }
     try {
@@ -66,26 +68,25 @@ export default function StudentsScreen({ navigation }: Props) {
       setShowAdd(false);
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao criar estudante');
+      showModal('Erro', err?.response?.data?.message ?? 'Falha ao criar estudante');
     }
   };
 
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const handleDelete = (id: string) => {
-    Alert.alert('Confirmação', 'Deseja excluir este estudante?', [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await deleteUser(id);
-            setStudents(prev => prev.filter(t => t.id !== id));
-          } catch (err: any) {
-            Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao excluir estudante');
-          }
-        },
-      },
-    ]);
+    setDeleteId(id);
+    showModal('Confirmação', 'Deseja excluir este estudante?', () => setDeleteId(null));
+  };
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteUser(deleteId);
+      setStudents(prev => prev.filter(t => t.id !== deleteId));
+      setDeleteId(null);
+      setModal({ visible: false, title: '', message: '', onClose: undefined });
+    } catch (err: any) {
+      showModal('Erro', err?.response?.data?.message ?? 'Falha ao excluir estudante');
+    }
   };
 
   const handleEditSave = async (id: string) => {
@@ -104,7 +105,7 @@ export default function StudentsScreen({ navigation }: Props) {
       setEditForm({ name: '', username: '', email: '', password: '' });
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao atualizar estudante');
+      showModal('Erro', err?.response?.data?.message ?? 'Falha ao atualizar estudante');
     }
   };
 
@@ -227,6 +228,47 @@ export default function StudentsScreen({ navigation }: Props) {
           ListEmptyComponent={<Text style={styles.empty}>Nenhum estudante encontrado.</Text>}
         />
       )}
+
+      {/* Modal customizado */}
+      <Modal
+        visible={modal.visible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          setModal({ visible: false, title: '', message: '', onClose: undefined });
+          if (modal.onClose) modal.onClose();
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{modal.title}</Text>
+            <Text style={styles.modalText}>{modal.message}</Text>
+            <View style={styles.modalButtons}>
+              {modal.title === 'Confirmação' && (
+                <>
+                  <TouchableOpacity onPress={() => {
+                    setModal({ visible: false, title: '', message: '', onClose: undefined });
+                    if (modal.onClose) modal.onClose();
+                  }} style={styles.modalButton}>
+                    <Text style={styles.cancelText}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={confirmDelete} style={[styles.modalButton, styles.deleteButton]}>
+                    <Text style={styles.deleteText}>Excluir</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+              {modal.title !== 'Confirmação' && (
+                <TouchableOpacity onPress={() => {
+                  setModal({ visible: false, title: '', message: '', onClose: undefined });
+                  if (modal.onClose) modal.onClose();
+                }} style={styles.modalButton}>
+                  <Text style={styles.cancelText}>Fechar</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -377,5 +419,49 @@ const styles = StyleSheet.create({
   empty: {
     textAlign: 'center',
     marginTop: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 24,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+  },
+  cancelText: {
+    color: '#666',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  deleteText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
 });
