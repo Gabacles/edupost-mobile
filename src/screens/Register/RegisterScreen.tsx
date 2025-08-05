@@ -54,6 +54,7 @@ export default function RegisterScreen({ navigation }: Props) {
         placeholder="Nome completo"
         value={name}
         onChangeText={setName}
+        placeholderTextColor="#888"
       />
       <TextInput
         style={styles.input}
@@ -61,6 +62,7 @@ export default function RegisterScreen({ navigation }: Props) {
         autoCapitalize="none"
         value={username}
         onChangeText={setUsername}
+        placeholderTextColor="#888"
       />
       <TextInput
         style={styles.input}
@@ -69,6 +71,7 @@ export default function RegisterScreen({ navigation }: Props) {
         autoCapitalize="none"
         value={email}
         onChangeText={setEmail}
+        placeholderTextColor="#888"
       />
       <View style={styles.pickerContainer}>
         <Picker selectedValue={role} onValueChange={(itemValue) => setRole(itemValue as any)} style={styles.picker}>
@@ -82,6 +85,7 @@ export default function RegisterScreen({ navigation }: Props) {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        placeholderTextColor="#888"
       />
       <TextInput
         style={styles.input}
@@ -89,11 +93,18 @@ export default function RegisterScreen({ navigation }: Props) {
         secureTextEntry
         value={confirm}
         onChangeText={setConfirm}
+        placeholderTextColor="#888"
       />
       {loading ? (
-        <ActivityIndicator size="small" />
+        <ActivityIndicator size="small" style={{ marginVertical: 12 }} />
       ) : (
-        <Button title="Registrar" onPress={handleRegister} disabled={!name || !username || !email || !password || !confirm} />
+        <TouchableOpacity
+          style={[styles.button, (!name || !username || !email || !password || !confirm) && styles.buttonDisabled]}
+          onPress={handleRegister}
+          disabled={!name || !username || !email || !password || !confirm}
+        >
+          <Text style={styles.buttonText}>Registrar</Text>
+        </TouchableOpacity>
       )}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.linkContainer}>
         <Text style={styles.link}>Já possui uma conta? Efetuar login</Text>
@@ -107,48 +118,76 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 24,
     textAlign: 'center',
+    color: '#1976d2',
+    letterSpacing: 1,
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    height: 44,
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+    borderRadius: 8,
+    marginBottom: 14,
+    paddingHorizontal: 12,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
+    color: '#222',
   },
   pickerContainer: {
-    borderColor: '#ccc',
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    marginBottom: 12,
+    borderRadius: 8,
+    marginBottom: 14,
     overflow: 'hidden',
+    backgroundColor: '#fafafa',
   },
   picker: {
-    height: 40,
+    height: 44,
     width: '100%',
+    color: '#222',
+  },
+  button: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#b0b0b0',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   error: {
     color: '#d64545',
     marginBottom: 12,
     textAlign: 'center',
+    fontSize: 15,
   },
   success: {
-    color: '#2e7d32',
+    color: '#43a047',
     marginBottom: 12,
     textAlign: 'center',
+    fontSize: 15,
   },
   linkContainer: {
-    marginTop: 16,
+    marginTop: 18,
     alignItems: 'center',
   },
   link: {
-    color: '#007aff',
+    color: '#1976d2',
     textDecorationLine: 'underline',
+    fontSize: 15,
   },
 });

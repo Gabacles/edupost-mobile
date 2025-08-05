@@ -36,6 +36,7 @@ export default function LoginScreen({ navigation }: Props) {
         keyboardType="email-address"
         value={email}
         onChangeText={setEmail}
+        placeholderTextColor="#888"
       />
       <TextInput
         style={styles.input}
@@ -43,11 +44,18 @@ export default function LoginScreen({ navigation }: Props) {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        placeholderTextColor="#888"
       />
       {loading ? (
-        <ActivityIndicator size="small" />
+        <ActivityIndicator size="small" style={{ marginVertical: 12 }} />
       ) : (
-        <Button title="Entrar" onPress={handleLogin} disabled={!email || !password} />
+        <TouchableOpacity
+          style={[styles.button, (!email || !password) && styles.buttonDisabled]}
+          onPress={handleLogin}
+          disabled={!email || !password}
+        >
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
       )}
       <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.linkContainer}>
         <Text style={styles.link}>Não tem uma conta? Cadastre-se</Text>
@@ -61,32 +69,57 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
+    color: '#1976d2',
+    letterSpacing: 1,
   },
   input: {
-    height: 40,
-    borderColor: '#ccc',
+    height: 44,
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+    borderRadius: 8,
+    marginBottom: 14,
+    paddingHorizontal: 12,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
+    color: '#222',
+  },
+  button: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: '#b0b0b0',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   error: {
     color: '#d64545',
     marginBottom: 12,
     textAlign: 'center',
+    fontSize: 15,
   },
   linkContainer: {
-    marginTop: 16,
+    marginTop: 18,
     alignItems: 'center',
   },
   link: {
-    color: '#007aff',
+    color: '#1976d2',
     textDecorationLine: 'underline',
+    fontSize: 15,
   },
 });
