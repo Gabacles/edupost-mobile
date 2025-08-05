@@ -44,7 +44,7 @@ export default function TeachersScreen({ navigation }: Props) {
       const allUsers = res.data as AppUser[];
       setTeachers(allUsers.filter(u => u.roles?.includes('TEACHER')));
     } catch (err: any) {
-      setError(err?.response?.data?.message ?? 'Failed to load users');
+      setError(err?.response?.data?.message ?? 'Falha ao carregar usuários');
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ export default function TeachersScreen({ navigation }: Props) {
   const handleAdd = async () => {
     const { name, username, email, password } = newUser;
     if (!name || !username || !email || !password) {
-      Alert.alert('Validation', 'All fields are required');
+      Alert.alert('Validação', 'Todos os campos são obrigatórios');
       return;
     }
     try {
@@ -66,22 +66,22 @@ export default function TeachersScreen({ navigation }: Props) {
       setShowAdd(false);
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Error', err?.response?.data?.message ?? 'Failed to create teacher');
+      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao criar professor');
     }
   };
 
   const handleDelete = (id: string) => {
-    Alert.alert('Confirm', 'Delete this teacher?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert('Confirmação', 'Deseja excluir este professor?', [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Delete',
+        text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteUser(id);
             setTeachers(prev => prev.filter(t => t.id !== id));
           } catch (err: any) {
-            Alert.alert('Error', err?.response?.data?.message ?? 'Failed to delete teacher');
+            Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao excluir professor');
           }
         },
       },
@@ -104,7 +104,7 @@ export default function TeachersScreen({ navigation }: Props) {
       setEditForm({ name: '', username: '', email: '', password: '' });
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Error', err?.response?.data?.message ?? 'Failed to update teacher');
+      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao atualizar professor');
     }
   };
 
@@ -115,24 +115,24 @@ export default function TeachersScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.toggleButton} onPress={() => setShowAdd(!showAdd)}>
-        <Text style={styles.toggleButtonText}>{showAdd ? 'Cancel' : 'Add Teacher'}</Text>
+        <Text style={styles.toggleButtonText}>{showAdd ? 'Cancelar' : 'Adicionar Professor'}</Text>
       </TouchableOpacity>
       {showAdd && (
         <View style={styles.form}>
           <TextInput
-            placeholder="Name"
+            placeholder="Nome"
             style={styles.input}
             value={newUser.name}
             onChangeText={t => setNewUser({ ...newUser, name: t })}
           />
           <TextInput
-            placeholder="Username"
+            placeholder="Usuário"
             style={styles.input}
             value={newUser.username}
             onChangeText={t => setNewUser({ ...newUser, username: t })}
           />
           <TextInput
-            placeholder="Email"
+            placeholder="E-mail"
             style={styles.input}
             value={newUser.email}
             onChangeText={t => setNewUser({ ...newUser, email: t })}
@@ -140,14 +140,14 @@ export default function TeachersScreen({ navigation }: Props) {
             keyboardType="email-address"
           />
           <TextInput
-            placeholder="Password"
+            placeholder="Senha"
             style={styles.input}
             value={newUser.password}
             onChangeText={t => setNewUser({ ...newUser, password: t })}
             secureTextEntry
           />
           <TouchableOpacity style={styles.createButton} onPress={handleAdd}>
-            <Text style={styles.createButtonText}>Create</Text>
+            <Text style={styles.createButtonText}>Criar</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -169,25 +169,25 @@ export default function TeachersScreen({ navigation }: Props) {
               {editingId === item.id ? (
                 <View style={{ flex: 1 }}>
                   <TextInput
-                    placeholder="Name"
+                    placeholder="Nome"
                     style={styles.input}
                     value={editForm.name}
                     onChangeText={t => setEditForm(prev => ({ ...prev, name: t }))}
                   />
                   <TextInput
-                    placeholder="Username"
+                    placeholder="Usuário"
                     style={styles.input}
                     value={editForm.username}
                     onChangeText={t => setEditForm(prev => ({ ...prev, username: t }))}
                   />
                   <TextInput
-                    placeholder="Email"
+                    placeholder="E-mail"
                     style={styles.input}
                     value={editForm.email}
                     onChangeText={t => setEditForm(prev => ({ ...prev, email: t }))}
                   />
                   <TextInput
-                    placeholder="Password (leave blank to keep)"
+                    placeholder="Senha (deixe em branco para manter)"
                     style={styles.input}
                     value={editForm.password}
                     onChangeText={t => setEditForm(prev => ({ ...prev, password: t }))}
@@ -195,10 +195,10 @@ export default function TeachersScreen({ navigation }: Props) {
                   />
                   <View style={styles.row}>
                     <TouchableOpacity style={styles.saveButton} onPress={() => handleEditSave(item.id)}>
-                      <Text style={styles.saveButtonText}>Save</Text>
+                      <Text style={styles.saveButtonText}>Salvar</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.cancelButton} onPress={() => setEditingId(null)}>
-                      <Text style={styles.cancelButtonText}>Cancel</Text>
+                      <Text style={styles.cancelButtonText}>Cancelar</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -215,16 +215,16 @@ export default function TeachersScreen({ navigation }: Props) {
                     setEditingId(item.id);
                     setEditForm({ name: item.name, username: item.username, email: item.email, password: '' });
                   }}>
-                    <Text style={styles.editButtonText}>Edit</Text>
+                    <Text style={styles.editButtonText}>Editar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>
+                    <Text style={styles.deleteButtonText}>Excluir</Text>
                   </TouchableOpacity>
                 </View>
               )}
             </View>
           )}
-          ListEmptyComponent={<Text style={styles.empty}>No teachers found.</Text>}
+          ListEmptyComponent={<Text style={styles.empty}>Nenhum professor encontrado.</Text>}
         />
       )}
     </View>

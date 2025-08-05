@@ -65,9 +65,11 @@ export default function PostsListScreen({ navigation }: Props) {
   };
 
   useEffect(() => {
-    loadPosts(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadPosts(true);
+    });
+    return unsubscribe;
+  }, [navigation, search]);
 
   const handleSearch = () => {
     setPage(1);
