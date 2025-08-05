@@ -62,7 +62,9 @@ export default function CreatePostScreen() {
       {loading ? (
         <ActivityIndicator style={{ marginTop: 12 }} />
       ) : (
-        <Button title="Publicar" onPress={handleSubmit} />
+        <RN.TouchableOpacity style={styles.publishButton} onPress={handleSubmit}>
+          <Text style={styles.publishButtonText}>Publicar</Text>
+        </RN.TouchableOpacity>
       )}
     </View>
   );
@@ -72,21 +74,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#fff',
   },
   label: {
     fontWeight: 'bold',
     marginTop: 8,
+    fontSize: 16,
+    color: '#222',
+    marginBottom: 4,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginBottom: 8,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
   },
   textArea: {
     height: 120,
     textAlignVertical: 'top',
+  },
+  publishButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    marginTop: 8,
+  },
+  publishButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 17,
+    letterSpacing: 0.5,
   },
 });

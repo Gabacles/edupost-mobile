@@ -87,8 +87,12 @@ export default function PostDetailScreen({ route, navigation }: Props) {
       <Text style={styles.content}>{post.content}</Text>
       {canEdit && (
         <View style={styles.buttonRow}>
-          <Button title="Editar" onPress={() => navigation.navigate('EditPost', { postId: post.id })} />
-          <Button title="Deletar" onPress={() => setShowDeleteModal(true)} color="#d64545" />
+          <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditPost', { postId: post.id })}>
+            <Text style={styles.editButtonText}>Editar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteButtonAction} onPress={() => setShowDeleteModal(true)}>
+            <Text style={styles.deleteButtonText}>Deletar</Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -162,7 +166,38 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 24,
+    gap: 12,
+  },
+  editButton: {
+    flex: 1,
+    backgroundColor: '#43a047',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
+  },
+  deleteButtonAction: {
+    flex: 1,
+    backgroundColor: '#d64545',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   error: {
     color: '#d64545',
@@ -207,12 +242,17 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: '#d64545',
-    borderRadius: 4,
+    borderRadius: 8,
     marginLeft: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    elevation: 2,
   },
   deleteText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+    letterSpacing: 0.5,
   },
 });

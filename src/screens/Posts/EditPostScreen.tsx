@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator, Alert, TouchableOpacity } from 'react-native';
 import { fetchPost, updatePost } from '../../api/api';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation';
@@ -85,7 +85,11 @@ export default function EditPostScreen({ route, navigation }: Props) {
       {saving ? (
         <ActivityIndicator style={{ marginTop: 12 }} />
       ) : (
-        <Button title="Salvar" onPress={handleSave} />
+        <View style={styles.saveButtonContainer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Salvar</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -95,6 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#fff',
   },
   center: {
     flex: 1,
@@ -104,17 +109,38 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     marginTop: 8,
+    fontSize: 16,
+    color: '#222',
+    marginBottom: 4,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginBottom: 8,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
   },
   textArea: {
     height: 120,
     textAlignVertical: 'top',
+  },
+  saveButtonContainer: {
+    marginTop: 8,
+  },
+  saveButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 17,
+    letterSpacing: 0.5,
   },
 });

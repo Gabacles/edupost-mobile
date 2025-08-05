@@ -8,6 +8,7 @@ import {
   Button,
   TextInput,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { fetchUsers, createUser, updateUser, deleteUser } from '../../api/api';
@@ -56,7 +57,7 @@ export default function StudentsScreen({ navigation }: Props) {
   const handleAdd = async () => {
     const { name, username, email, password } = newUser;
     if (!name || !username || !email || !password) {
-      Alert.alert('Validation', 'All fields are required');
+      Alert.alert('Validação', 'Todos os campos são obrigatórios');
       return;
     }
     try {
@@ -65,22 +66,22 @@ export default function StudentsScreen({ navigation }: Props) {
       setShowAdd(false);
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Error', err?.response?.data?.message ?? 'Failed to create student');
+      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao criar estudante');
     }
   };
 
   const handleDelete = (id: string) => {
-    Alert.alert('Confirm', 'Delete this student?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert('Confirmação', 'Deseja excluir este estudante?', [
+      { text: 'Cancelar', style: 'cancel' },
       {
-        text: 'Delete',
+        text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           try {
             await deleteUser(id);
             setStudents(prev => prev.filter(t => t.id !== id));
           } catch (err: any) {
-            Alert.alert('Error', err?.response?.data?.message ?? 'Failed to delete student');
+            Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao excluir estudante');
           }
         },
       },
@@ -103,7 +104,7 @@ export default function StudentsScreen({ navigation }: Props) {
       setEditForm({ name: '', username: '', email: '', password: '' });
       loadUsers();
     } catch (err: any) {
-      Alert.alert('Error', err?.response?.data?.message ?? 'Failed to update student');
+      Alert.alert('Erro', err?.response?.data?.message ?? 'Falha ao atualizar estudante');
     }
   };
 
@@ -113,23 +114,25 @@ export default function StudentsScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Button title={showAdd ? 'Cancel' : 'Add Student'} onPress={() => setShowAdd(!showAdd)} />
+      <TouchableOpacity style={styles.toggleButton} onPress={() => setShowAdd(!showAdd)}>
+        <Text style={styles.toggleButtonText}>{showAdd ? 'Cancelar' : 'Adicionar Estudante'}</Text>
+      </TouchableOpacity>
       {showAdd && (
         <View style={styles.form}>
           <TextInput
-            placeholder="Name"
+            placeholder="Nome"
             style={styles.input}
             value={newUser.name}
             onChangeText={t => setNewUser({ ...newUser, name: t })}
           />
           <TextInput
-            placeholder="Username"
+            placeholder="Usuário"
             style={styles.input}
             value={newUser.username}
             onChangeText={t => setNewUser({ ...newUser, username: t })}
           />
           <TextInput
-            placeholder="Email"
+            placeholder="E-mail"
             style={styles.input}
             value={newUser.email}
             onChangeText={t => setNewUser({ ...newUser, email: t })}
@@ -137,13 +140,15 @@ export default function StudentsScreen({ navigation }: Props) {
             keyboardType="email-address"
           />
           <TextInput
-            placeholder="Password"
+            placeholder="Senha"
             style={styles.input}
             value={newUser.password}
             onChangeText={t => setNewUser({ ...newUser, password: t })}
             secureTextEntry
           />
-          <Button title="Create" onPress={handleAdd} />
+          <TouchableOpacity style={styles.createButton} onPress={handleAdd}>
+            <Text style={styles.createButtonText}>Criar</Text>
+          </TouchableOpacity>
         </View>
       )}
       {loading ? (
@@ -164,33 +169,37 @@ export default function StudentsScreen({ navigation }: Props) {
               {editingId === item.id ? (
                 <View style={{ flex: 1 }}>
                   <TextInput
-                    placeholder="Name"
+                    placeholder="Nome"
                     style={styles.input}
                     value={editForm.name}
                     onChangeText={t => setEditForm(prev => ({ ...prev, name: t }))}
                   />
                   <TextInput
-                    placeholder="Username"
+                    placeholder="Usuário"
                     style={styles.input}
                     value={editForm.username}
                     onChangeText={t => setEditForm(prev => ({ ...prev, username: t }))}
                   />
                   <TextInput
-                    placeholder="Email"
+                    placeholder="E-mail"
                     style={styles.input}
                     value={editForm.email}
                     onChangeText={t => setEditForm(prev => ({ ...prev, email: t }))}
                   />
                   <TextInput
-                    placeholder="Password (leave blank to keep)"
+                    placeholder="Senha (deixe em branco para manter)"
                     style={styles.input}
                     value={editForm.password}
                     onChangeText={t => setEditForm(prev => ({ ...prev, password: t }))}
                     secureTextEntry
                   />
                   <View style={styles.row}>
-                    <Button title="Save" onPress={() => handleEditSave(item.id)} />
-                    <Button title="Cancel" onPress={() => setEditingId(null)} />
+                    <TouchableOpacity style={styles.saveButton} onPress={() => handleEditSave(item.id)}>
+                      <Text style={styles.saveButtonText}>Salvar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.cancelButton} onPress={() => setEditingId(null)}>
+                      <Text style={styles.cancelButtonText}>Cancelar</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               ) : (
@@ -202,16 +211,20 @@ export default function StudentsScreen({ navigation }: Props) {
               )}
               {editingId !== item.id && (
                 <View style={styles.row}>
-                  <Button title="Edit" onPress={() => {
+                  <TouchableOpacity style={styles.editButton} onPress={() => {
                     setEditingId(item.id);
                     setEditForm({ name: item.name, username: item.username, email: item.email, password: '' });
-                  }} />
-                  <Button title="Delete" color="#d64545" onPress={() => handleDelete(item.id)} />
+                  }}>
+                    <Text style={styles.editButtonText}>Editar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+                    <Text style={styles.deleteButtonText}>Excluir</Text>
+                  </TouchableOpacity>
                 </View>
               )}
             </View>
           )}
-          ListEmptyComponent={<Text style={styles.empty}>No students found.</Text>}
+          ListEmptyComponent={<Text style={styles.empty}>Nenhum estudante encontrado.</Text>}
         />
       )}
     </View>
@@ -226,30 +239,127 @@ const styles = StyleSheet.create({
   form: {
     marginVertical: 12,
     backgroundColor: '#f8f8f8',
-    padding: 8,
-    borderRadius: 4,
+    padding: 12,
+    borderRadius: 8,
   },
   input: {
-    borderColor: '#ccc',
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginBottom: 8,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
   },
   item: {
     backgroundColor: '#f8f8f8',
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
+    padding: 14,
+    marginBottom: 10,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 1,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginLeft: 8,
+    gap: 8,
+  },
+  toggleButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 8,
+    elevation: 2,
+  },
+  toggleButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
+  },
+  createButton: {
+    backgroundColor: '#43a047',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    marginTop: 4,
+  },
+  createButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
+  },
+  saveButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    flex: 1,
+    marginRight: 4,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  cancelButton: {
+    backgroundColor: '#888',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    flex: 1,
+    marginLeft: 4,
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  editButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    flex: 1,
+    marginRight: 4,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  deleteButton: {
+    backgroundColor: '#d64545',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    flex: 1,
+    marginLeft: 4,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+    paddingHorizontal: 22,
   },
   name: {
     fontSize: 16,

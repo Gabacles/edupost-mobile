@@ -96,12 +96,18 @@ export default function PostsListScreen({ navigation }: Props) {
           onSubmitEditing={handleSearch}
           returnKeyType="search"
         />
-        <Button title="Buscar" onPress={handleSearch} />
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+          <Text style={styles.searchButtonText}>Buscar</Text>
+        </TouchableOpacity>
       </View>
       {isTeacher && (
         <View style={styles.actionsRow}>
-          <Button title="Publicar" onPress={() => navigation.navigate('CreatePost')} />
-          <Button title="Admin" onPress={() => navigation.navigate('AdminDashboard')} />
+          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('CreatePost')}>
+            <Text style={styles.actionButtonText}>Publicar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={() => navigation.navigate('AdminDashboard')}>
+            <Text style={styles.actionButtonText}>Admin</Text>
+          </TouchableOpacity>
         </View>
       )}
       <FlatList
@@ -121,7 +127,9 @@ export default function PostsListScreen({ navigation }: Props) {
         ListEmptyComponent={!loading ? <Text style={styles.empty}>No posts found.</Text> : null}
       />
       <View style={styles.logoutContainer}>
-        <Button title="Sair" onPress={logout} color="#d64545" />
+        <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+          <Text style={styles.logoutButtonText}>Sair</Text>
+        </TouchableOpacity>
       </View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -132,57 +140,117 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#fff',
   },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
+    gap: 8,
   },
   searchInput: {
     flex: 1,
-    height: 40,
-    borderColor: '#ccc',
+    height: 44,
+    borderColor: '#e0e0e0',
     borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    marginRight: 8,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginRight: 0,
+    backgroundColor: '#fafafa',
+    fontSize: 16,
+  },
+  searchButton: {
+    backgroundColor: '#1976d2',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+  },
+  searchButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 16,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    backgroundColor: '#43a047',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   postCard: {
-    padding: 12,
+    padding: 16,
     backgroundColor: '#f8f8f8',
-    borderRadius: 6,
-    marginBottom: 12,
+    borderRadius: 8,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 1,
   },
   postTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 6,
+    color: '#222',
   },
   postAuthor: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: 13,
+    color: '#888',
+    marginBottom: 6,
   },
   postExcerpt: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#333',
   },
   empty: {
     textAlign: 'center',
-    color: '#666',
-    marginTop: 20,
+    color: '#888',
+    marginTop: 32,
+    fontSize: 16,
   },
   logoutContainer: {
-    marginTop: 8,
+    marginTop: 16,
+    marginBottom: 8,
+    alignItems: 'center',
+  },
+  logoutButton: {
+    backgroundColor: '#d64545',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+    width: '60%',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   error: {
     color: '#d64545',
-    marginTop: 8,
+    marginTop: 12,
     textAlign: 'center',
+    fontSize: 15,
   },
 });

@@ -98,11 +98,12 @@ export default function AdminDashboardScreen({ navigation }: Props) {
         </Text>
       </TouchableOpacity>
       <View style={styles.postActions}>
-        <Button
-          title="Editar"
-          onPress={() => navigation.navigate('EditPost', { postId: item.id })}
-        />
-        <Button title="Deletar" color="#d64545" onPress={() => handleDelete(item.id)} />
+        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditPost', { postId: item.id })}>
+          <Text style={styles.editButtonText}>Editar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButtonAction} onPress={() => handleDelete(item.id)}>
+          <Text style={styles.deleteButtonText}>Deletar</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -110,8 +111,12 @@ export default function AdminDashboardScreen({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.buttonsRow}>
-        <Button title="Professores" onPress={() => navigation.navigate('Teachers')} />
-        <Button title="Alunos" onPress={() => navigation.navigate('Students')} />
+        <TouchableOpacity style={styles.headerButton} onPress={() => navigation.navigate('Teachers')}>
+          <Text style={styles.headerButtonText}>Professores</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.headerButton} onPress={() => navigation.navigate('Students')}>
+          <Text style={styles.headerButtonText}>Alunos</Text>
+        </TouchableOpacity>
       </View>
       {loading ? (
         <ActivityIndicator style={{ marginTop: 16 }} />
@@ -166,15 +171,36 @@ const styles = StyleSheet.create({
   buttonsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 16,
+    gap: 12,
+  },
+  headerButton: {
+    flex: 1,
+    backgroundColor: '#1976d2',
+    paddingVertical: 12,
+    marginHorizontal: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  headerButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   postRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
     backgroundColor: '#f8f8f8',
-    padding: 8,
-    borderRadius: 4,
+    padding: 14,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 1,
   },
   postTitle: {
     fontSize: 16,
@@ -185,9 +211,38 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   postActions: {
-    justifyContent: 'space-between',
-    height: '100%',
-    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+  editButton: {
+    backgroundColor: '#43a047',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 6,
+    elevation: 2,
+  },
+  editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+  deleteButtonAction: {
+    backgroundColor: '#d64545',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+    letterSpacing: 0.5,
   },
   error: {
     color: '#d64545',
@@ -238,12 +293,17 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: '#d64545',
-    borderRadius: 4,
+    borderRadius: 8,
     marginLeft: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    elevation: 2,
   },
   deleteText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
+    letterSpacing: 0.5,
   },
 });
